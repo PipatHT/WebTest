@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyPocket - ระบบบันทึกรายรับรายจ่าย</title>
+    <title>BlueWallet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <script>
         tailwind.config = {
             theme: {
@@ -24,23 +25,51 @@
         }
     </script>
     <style>
-        body { font-family: 'Prompt', sans-serif; background-color: #f8fafc; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
         /* Custom Loader */
-        .loader { border-top-color: #3b82f6; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
-        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loader {
+            border-top-color: #3b82f6;
+            -webkit-animation: spinner 1.5s linear infinite;
+            animation: spinner 1.5s linear infinite;
+        }
+
+        @keyframes spinner {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
-<body class="text-gray-800 w-full h-full min-h-screen overflow-hidden flex bg-bgSoft relative">
+
+<body class="text-gray-800 w-full h-screen overflow-hidden flex bg-bgSoft relative">
 
     <!-- Authentication Layer -->
-    <div id="auth-layer" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 to-white transition-opacity duration-500">
-        
+    <div id="auth-layer"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-100 to-white transition-opacity duration-500">
+
         <!-- Login Form -->
-        <div id="login-form" class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm mx-4 transform transition-transform">
+        <div id="login-form"
+            class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm mx-4 transform transition-transform">
             <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md text-2xl">
+                <div
+                    class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md text-2xl">
                     <i class="fa-solid fa-wallet"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-gray-800">MyPocket</h2>
@@ -49,18 +78,22 @@
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้งาน</label>
-                    <input type="text" id="login-username" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition">
+                    <input type="text" id="login-username" required
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
-                    <input type="password" id="login-password" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition">
+                    <input type="password" id="login-password" required
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition">
                 </div>
-                <button type="submit" id="btn-login" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 rounded-xl shadow-md transition-colors flex justify-center items-center gap-2">
+                <button type="submit" id="btn-login"
+                    class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3 rounded-xl shadow-md transition-colors flex justify-center items-center gap-2">
                     เข้าสู่ระบบ
                 </button>
             </form>
             <div class="mt-6 text-center text-sm text-gray-600">
-                ยังไม่มีบัญชี? <button onclick="toggleAuth('register')" class="text-primary font-semibold hover:underline">สมัครสมาชิก</button>
+                ยังไม่มีบัญชี? <button onclick="toggleAuth('register')"
+                    class="text-primary font-semibold hover:underline">สมัครสมาชิก</button>
             </div>
         </div>
 
@@ -73,68 +106,102 @@
             <form onsubmit="handleRegister(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ - นามสกุล</label>
-                    <input type="text" id="reg-name" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition">
+                    <input type="text" id="reg-name" required
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">อีเมล (Email)</label>
-                    <input type="email" id="reg-email" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition">
+                    <input type="email" id="reg-email" required
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้งาน (Username)</label>
-                    <input type="text" id="reg-username" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition">
+                    <input type="text" id="reg-username" required
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition">
+                </div>
+                <!-- เพิ่มส่วนอัปโหลดรูปภาพโปรไฟล์ (ไม่บังคับ) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">รูปโปรไฟล์ (ไม่บังคับ)</label>
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-gray-200 shrink-0">
+                            <img id="reg-profile-preview" src="" class="w-full h-full object-cover hidden">
+                            <i id="reg-profile-icon" class="fa-solid fa-image text-gray-400 text-2xl"></i>
+                        </div>
+                        <input type="file" id="reg-profile-file" accept="image/*" onchange="previewRegProfile(event)"
+                            class="text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-primary hover:file:bg-blue-100 cursor-pointer w-full">
+                    </div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
-                    <input type="password" id="reg-password" required minlength="4" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition">
+                    <input type="password" id="reg-password" required minlength="4"
+                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition">
                 </div>
-                <button type="submit" id="btn-register" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition-colors flex justify-center items-center gap-2 mt-2">
+                <button type="submit" id="btn-register"
+                    class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-md transition-colors flex justify-center items-center gap-2 mt-2">
                     สมัครสมาชิก
                 </button>
             </form>
             <div class="mt-6 text-center text-sm text-gray-600">
-                มีบัญชีอยู่แล้ว? <button onclick="toggleAuth('login')" class="text-primary font-semibold hover:underline">เข้าสู่ระบบ</button>
+                มีบัญชีอยู่แล้ว? <button onclick="toggleAuth('login')"
+                    class="text-primary font-semibold hover:underline">เข้าสู่ระบบ</button>
             </div>
         </div>
     </div>
 
     <!-- Main App Layer -->
     <div id="app-layer" class="flex w-full h-full opacity-0 pointer-events-none transition-opacity duration-500">
-        
+
         <!-- Sidebar (Desktop) -->
         <aside class="w-64 bg-white shadow-lg border-r border-gray-100 flex-col hidden md:flex flex-shrink-0 z-20">
             <div class="p-6 border-b border-gray-50 text-center">
-                <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-2 text-xl shadow-sm"><i class="fa-solid fa-wallet"></i></div>
+                <!-- ปรับแต่งไอคอนให้แสดงรูปโปรไฟล์ถ้ามี -->
+                <div
+                    class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-2 text-2xl shadow-sm overflow-hidden border-2 border-blue-100">
+                    <img id="sidebar-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Profile">
+                    <i id="sidebar-avatar-icon" class="fa-solid fa-user"></i>
+                </div>
                 <h2 class="text-xl font-bold text-gray-800">MyPocket</h2>
                 <p class="text-xs text-gray-500 truncate mt-1" id="sidebar-user-name">กำลังโหลด...</p>
             </div>
             <nav class="flex-1 py-4 flex flex-col gap-2 px-4 overflow-y-auto">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item flex items-center p-3 text-primary bg-blue-50 rounded-xl font-medium transition w-full text-left">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard"
+                    class="nav-item flex items-center p-3 text-primary bg-blue-50 rounded-xl font-medium transition w-full text-left">
                     <i class="fa-solid fa-chart-pie w-6"></i> ภาพรวม
                 </button>
-                <button onclick="switchTab('data-entry')" id="nav-data-entry" class="nav-item flex items-center p-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition w-full text-left">
+                <button onclick="switchTab('data-entry')" id="nav-data-entry"
+                    class="nav-item flex items-center p-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition w-full text-left">
                     <i class="fa-solid fa-plus-circle w-6"></i> บันทึกรายการ
                 </button>
-                <button onclick="switchTab('records')" id="nav-records" class="nav-item flex items-center p-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition w-full text-left">
+                <button onclick="switchTab('records')" id="nav-records"
+                    class="nav-item flex items-center p-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition w-full text-left">
                     <i class="fa-solid fa-table-list w-6"></i> ประวัติข้อมูล
                 </button>
-                <button onclick="switchTab('profile')" id="nav-profile" class="nav-item flex items-center p-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition w-full text-left">
+                <button onclick="switchTab('profile')" id="nav-profile"
+                    class="nav-item flex items-center p-3 text-gray-600 hover:bg-gray-50 rounded-xl font-medium transition w-full text-left">
                     <i class="fa-solid fa-user-gear w-6"></i> ตั้งค่าบัญชี
                 </button>
             </nav>
             <div class="p-4 border-t border-gray-50">
-                <button onclick="handleLogout()" class="flex items-center justify-center w-full p-3 text-red-500 hover:bg-red-50 rounded-xl transition font-medium">
+                <button onclick="handleLogout()"
+                    class="flex items-center justify-center w-full p-3 text-red-500 hover:bg-red-50 rounded-xl transition font-medium">
                     <i class="fa-solid fa-right-from-bracket mr-2"></i> ออกจากระบบ
                 </button>
             </div>
         </aside>
 
         <!-- Main Content Area -->
-        <div class="flex-1 flex flex-col min-w-0 w-full bg-bgSoft relative">
-            
+        <div class="flex-1 flex flex-col min-w-0 h-full w-full bg-bgSoft relative">
+
             <!-- Mobile Header -->
             <header class="md:hidden bg-white shadow-sm flex items-center justify-between p-4 z-20">
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center"><i class="fa-solid fa-wallet text-sm"></i></div>
+                    <!-- ปรับแต่งไอคอนมือถือให้แสดงรูปโปรไฟล์ถ้ามี -->
+                    <div
+                        class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center overflow-hidden border border-blue-100">
+                        <img id="mobile-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Profile">
+                        <i id="mobile-avatar-icon" class="fa-solid fa-user text-sm"></i>
+                    </div>
                     <h1 class="text-lg font-bold text-gray-800">MyPocket</h1>
                 </div>
                 <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-primary text-2xl px-2">
@@ -143,36 +210,44 @@
             </header>
 
             <!-- Scrollable View Container -->
-            <main class="flex-1 overflow-y-auto p-4 md:p-8 w-full relative">
-                
+            <main class="flex-1 overflow-y-auto p-4 md:p-8 w-full h-full relative">
+
                 <!-- ================== VIEW: DASHBOARD ================== -->
                 <div id="view-dashboard" class="view-section w-full max-w-6xl mx-auto block">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800">ภาพรวมการเงิน</h2>
-                        <button onclick="loadData()" class="text-sm bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-3 py-1.5 rounded-lg shadow-sm transition flex items-center gap-2">
+                        <button onclick="loadData()"
+                            class="text-sm bg-white border border-gray-200 hover:bg-gray-50 text-gray-600 px-3 py-1.5 rounded-lg shadow-sm transition flex items-center gap-2">
                             <i class="fa-solid fa-rotate"></i> รีเฟรช
                         </button>
                     </div>
-                    
+
                     <!-- Stats Cards -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 w-full">
-                        <div class="bg-gradient-to-br from-primary to-primaryHover rounded-2xl p-6 shadow-md text-white relative overflow-hidden">
+                        <div
+                            class="bg-gradient-to-br from-primary to-primaryHover rounded-2xl p-6 shadow-md text-white relative overflow-hidden">
                             <p class="text-blue-100 text-sm font-medium mb-1">ยอดเงินคงเหลือ</p>
                             <h3 class="text-3xl font-bold truncate">฿<span id="stat-balance">0.00</span></h3>
                             <i class="fa-solid fa-wallet absolute right-4 bottom-4 text-6xl text-white opacity-10"></i>
                         </div>
                         <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-arrow-down"></i></div>
+                            <div
+                                class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-arrow-down"></i></div>
                             <div class="min-w-0">
                                 <p class="text-gray-500 text-sm font-medium mb-1">รายรับทั้งหมด</p>
-                                <h3 class="text-2xl font-bold text-gray-800 truncate text-green-600">฿<span id="stat-income">0.00</span></h3>
+                                <h3 class="text-2xl font-bold text-gray-800 truncate text-green-600">฿<span
+                                        id="stat-income">0.00</span></h3>
                             </div>
                         </div>
                         <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-full bg-red-100 text-red-500 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-arrow-up"></i></div>
+                            <div
+                                class="w-12 h-12 rounded-full bg-red-100 text-red-500 flex items-center justify-center text-xl shrink-0">
+                                <i class="fa-solid fa-arrow-up"></i></div>
                             <div class="min-w-0">
                                 <p class="text-gray-500 text-sm font-medium mb-1">รายจ่ายทั้งหมด</p>
-                                <h3 class="text-2xl font-bold text-gray-800 truncate text-red-500">฿<span id="stat-expense">0.00</span></h3>
+                                <h3 class="text-2xl font-bold text-gray-800 truncate text-red-500">฿<span
+                                        id="stat-expense">0.00</span></h3>
                             </div>
                         </div>
                     </div>
@@ -180,13 +255,15 @@
                     <!-- Charts -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 w-full">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                            <h3 class="text-lg font-bold text-gray-700 mb-4 text-center border-b border-gray-50 pb-2">สัดส่วนรายรับ</h3>
+                            <h3 class="text-lg font-bold text-gray-700 mb-4 text-center border-b border-gray-50 pb-2">
+                                สัดส่วนรายรับ</h3>
                             <div class="relative w-full aspect-square max-h-[250px] mx-auto flex justify-center">
                                 <canvas id="incomeChart"></canvas>
                             </div>
                         </div>
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                            <h3 class="text-lg font-bold text-gray-700 mb-4 text-center border-b border-gray-50 pb-2">สัดส่วนรายจ่าย</h3>
+                            <h3 class="text-lg font-bold text-gray-700 mb-4 text-center border-b border-gray-50 pb-2">
+                                สัดส่วนรายจ่าย</h3>
                             <div class="relative w-full aspect-square max-h-[250px] mx-auto flex justify-center">
                                 <canvas id="expenseChart"></canvas>
                             </div>
@@ -199,54 +276,72 @@
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">บันทึกรายการใหม่</h2>
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
                         <form id="tx-form" onsubmit="submitTransaction(event)">
-                            
+
                             <!-- Type Toggle -->
                             <div class="flex bg-gray-100 p-1 rounded-xl mb-6">
-                                <button type="button" id="btn-form-expense" onclick="setTxType('expense')" class="flex-1 py-3 rounded-lg bg-white shadow-sm text-red-500 font-bold text-sm transition-all">รายจ่าย</button>
-                                <button type="button" id="btn-form-income" onclick="setTxType('income')" class="flex-1 py-3 rounded-lg text-gray-500 font-medium text-sm transition-all hover:bg-gray-200">รายรับ</button>
+                                <button type="button" id="btn-form-expense" onclick="setTxType('expense')"
+                                    class="flex-1 py-3 rounded-lg bg-white shadow-sm text-red-500 font-bold text-sm transition-all">รายจ่าย</button>
+                                <button type="button" id="btn-form-income" onclick="setTxType('income')"
+                                    class="flex-1 py-3 rounded-lg text-gray-500 font-medium text-sm transition-all hover:bg-gray-200">รายรับ</button>
                             </div>
                             <input type="hidden" id="tx-type" value="expense">
 
                             <div class="space-y-5">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">จำนวนเงิน (บาท) <span class="text-red-500">*</span></label>
-                                    <input type="number" id="tx-amount" required min="1" step="0.01" class="w-full px-4 py-3 text-xl font-bold text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition" placeholder="0.00">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">จำนวนเงิน (บาท) <span
+                                            class="text-red-500">*</span></label>
+                                    <input type="number" id="tx-amount" required min="1" step="0.01"
+                                        class="w-full px-4 py-3 text-xl font-bold text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition"
+                                        placeholder="0.00">
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">วันที่ <span class="text-red-500">*</span></label>
-                                        <input type="date" id="tx-date" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition text-gray-700">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">วันที่ <span
+                                                class="text-red-500">*</span></label>
+                                        <input type="date" id="tx-date" required
+                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition text-gray-700">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">หมวดหมู่ <span class="text-red-500">*</span></label>
-                                        <select id="tx-category" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition text-gray-700">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">หมวดหมู่ <span
+                                                class="text-red-500">*</span></label>
+                                        <select id="tx-category" required
+                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition text-gray-700">
                                             <!-- Dynamically populated -->
                                         </select>
                                     </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">บันทึกเพิ่มเติม</label>
-                                    <input type="text" id="tx-note" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition" placeholder="เช่น ค่าอาหารกลางวัน">
+                                    <input type="text" id="tx-note"
+                                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition"
+                                        placeholder="เช่น ค่าอาหารกลางวัน">
                                 </div>
-                                
+
                                 <!-- File Upload -->
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">แนบสลิป/ใบเสร็จ (รูปภาพ)</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">แนบสลิป/ใบเสร็จ
+                                        (รูปภาพ)</label>
                                     <div class="flex items-center justify-center w-full">
-                                        <label for="tx-file" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
-                                            <div class="flex flex-col items-center justify-center pt-5 pb-6 text-gray-500">
+                                        <label for="tx-file"
+                                            class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
+                                            <div
+                                                class="flex flex-col items-center justify-center pt-5 pb-6 text-gray-500">
                                                 <i class="fa-solid fa-cloud-arrow-up text-3xl mb-2 text-primary"></i>
-                                                <p class="mb-1 text-sm"><span class="font-semibold">คลิกเพื่อเลือกรูปภาพ</span></p>
+                                                <p class="mb-1 text-sm"><span
+                                                        class="font-semibold">คลิกเพื่อเลือกรูปภาพ</span></p>
                                                 <p class="text-xs text-gray-400">ขนาดไม่เกิน 2MB</p>
                                             </div>
-                                            <input id="tx-file" type="file" class="hidden" accept="image/*" onchange="previewFile(event)" />
+                                            <input id="tx-file" type="file" class="hidden" accept="image/*"
+                                                onchange="previewFile(event)" />
                                         </label>
                                     </div>
-                                    <p id="file-name" class="mt-2 text-sm text-primary font-medium hidden text-center"></p>
+                                    <p id="file-name" class="mt-2 text-sm text-primary font-medium hidden text-center">
+                                    </p>
                                 </div>
                             </div>
-                            
-                            <button type="submit" id="btn-save-tx" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 rounded-xl shadow-md transition-colors flex justify-center items-center gap-2 mt-8">
+
+                            <button type="submit" id="btn-save-tx"
+                                class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 rounded-xl shadow-md transition-colors flex justify-center items-center gap-2 mt-8">
                                 <i class="fa-solid fa-save"></i> บันทึกข้อมูล
                             </button>
                         </form>
@@ -257,7 +352,7 @@
                 <div id="view-records" class="view-section w-full max-w-6xl mx-auto hidden pb-10">
                     <h2 class="text-2xl font-bold text-gray-800 mb-2">ประวัติข้อมูลทั้งหมด</h2>
                     <p class="text-gray-500 text-sm mb-6">รายการดึงมาจาก Google Sheets แบบ Real-time</p>
-                    
+
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden w-full">
                         <div class="overflow-x-auto w-full">
                             <table class="w-full text-left text-sm whitespace-nowrap min-w-[600px]">
@@ -273,7 +368,10 @@
                                 </thead>
                                 <tbody id="table-records" class="divide-y divide-gray-50 text-gray-700">
                                     <!-- Populated by JS -->
-                                    <tr><td colspan="6" class="px-6 py-8 text-center text-gray-400">กำลังโหลดข้อมูล...</td></tr>
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-8 text-center text-gray-400">กำลังโหลดข้อมูล...
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -286,34 +384,46 @@
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
                         <form id="profile-form" onsubmit="submitUpdateProfile(event)" class="space-y-5">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้งาน (Username)</label>
-                                <input type="text" id="prof-username" disabled class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-500 cursor-not-allowed">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้งาน
+                                    (Username)</label>
+                                <input type="text" id="prof-username" disabled
+                                    class="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-gray-500 cursor-not-allowed">
                                 <p class="text-xs text-gray-400 mt-1">* ไม่สามารถเปลี่ยนชื่อผู้ใช้งานได้</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ - นามสกุล <span class="text-red-500">*</span></label>
-                                <input type="text" id="prof-name" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition text-gray-800">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ - นามสกุล <span
+                                        class="text-red-500">*</span></label>
+                                <input type="text" id="prof-name" required
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition text-gray-800">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">อีเมล (Email) <span class="text-red-500">*</span></label>
-                                <input type="email" id="prof-email" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition text-gray-800">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">อีเมล (Email) <span
+                                        class="text-red-500">*</span></label>
+                                <input type="email" id="prof-email" required
+                                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition text-gray-800">
                             </div>
-                            
+
                             <div class="pt-4 border-t border-gray-100 mt-6">
-                                <h3 class="text-lg font-semibold text-gray-800 mb-4">เปลี่ยนรหัสผ่าน <span class="text-sm font-normal text-gray-500">(หากไม่ต้องการเปลี่ยน ให้เว้นว่างไว้)</span></h3>
+                                <h3 class="text-lg font-semibold text-gray-800 mb-4">เปลี่ยนรหัสผ่าน <span
+                                        class="text-sm font-normal text-gray-500">(หากไม่ต้องการเปลี่ยน
+                                        ให้เว้นว่างไว้)</span></h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่านใหม่</label>
-                                        <input type="password" id="prof-password" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition text-gray-800">
+                                        <input type="password" id="prof-password"
+                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition text-gray-800">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">ยืนยันรหัสผ่านใหม่</label>
-                                        <input type="password" id="prof-password-confirm" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition text-gray-800">
+                                        <label
+                                            class="block text-sm font-medium text-gray-700 mb-1">ยืนยันรหัสผ่านใหม่</label>
+                                        <input type="password" id="prof-password-confirm"
+                                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition text-gray-800">
                                     </div>
                                 </div>
                             </div>
-                            
-                            <button type="submit" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 rounded-xl shadow-md transition-colors flex justify-center items-center gap-2 mt-8">
+
+                            <button type="submit"
+                                class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-4 rounded-xl shadow-md transition-colors flex justify-center items-center gap-2 mt-8">
                                 <i class="fa-solid fa-user-check"></i> บันทึกการเปลี่ยนแปลง
                             </button>
                         </form>
@@ -329,25 +439,37 @@
         <div class="bg-white w-64 h-full p-0 flex flex-col shadow-xl">
             <div class="p-4 bg-primary text-white flex justify-between items-center">
                 <span class="font-bold text-lg"><i class="fa-solid fa-wallet mr-2"></i>เมนู</span>
-                <button onclick="toggleMobileMenu()" class="text-white hover:text-gray-200 text-xl"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="toggleMobileMenu()" class="text-white hover:text-gray-200 text-xl"><i
+                        class="fa-solid fa-xmark"></i></button>
             </div>
             <nav class="flex-1 py-2 flex flex-col px-2">
-                <button onclick="switchTab('dashboard'); toggleMobileMenu()" class="text-left p-4 text-gray-700 hover:bg-gray-50 rounded-lg font-medium border-b border-gray-50"><i class="fa-solid fa-chart-pie w-6 text-primary"></i> ภาพรวม</button>
-                <button onclick="switchTab('data-entry'); toggleMobileMenu()" class="text-left p-4 text-gray-700 hover:bg-gray-50 rounded-lg font-medium border-b border-gray-50"><i class="fa-solid fa-plus-circle w-6 text-primary"></i> บันทึกรายการ</button>
-                <button onclick="switchTab('records'); toggleMobileMenu()" class="text-left p-4 text-gray-700 hover:bg-gray-50 rounded-lg font-medium border-b border-gray-50"><i class="fa-solid fa-table-list w-6 text-primary"></i> ประวัติข้อมูล</button>
-                <button onclick="switchTab('profile'); toggleMobileMenu()" class="text-left p-4 text-gray-700 hover:bg-gray-50 rounded-lg font-medium border-b border-gray-50"><i class="fa-solid fa-user-gear w-6 text-primary"></i> ตั้งค่าบัญชี</button>
+                <button onclick="switchTab('dashboard'); toggleMobileMenu()"
+                    class="text-left p-4 text-gray-700 hover:bg-gray-50 rounded-lg font-medium border-b border-gray-50"><i
+                        class="fa-solid fa-chart-pie w-6 text-primary"></i> ภาพรวม</button>
+                <button onclick="switchTab('data-entry'); toggleMobileMenu()"
+                    class="text-left p-4 text-gray-700 hover:bg-gray-50 rounded-lg font-medium border-b border-gray-50"><i
+                        class="fa-solid fa-plus-circle w-6 text-primary"></i> บันทึกรายการ</button>
+                <button onclick="switchTab('records'); toggleMobileMenu()"
+                    class="text-left p-4 text-gray-700 hover:bg-gray-50 rounded-lg font-medium border-b border-gray-50"><i
+                        class="fa-solid fa-table-list w-6 text-primary"></i> ประวัติข้อมูล</button>
+                <button onclick="switchTab('profile'); toggleMobileMenu()"
+                    class="text-left p-4 text-gray-700 hover:bg-gray-50 rounded-lg font-medium border-b border-gray-50"><i
+                        class="fa-solid fa-user-gear w-6 text-primary"></i> ตั้งค่าบัญชี</button>
             </nav>
             <div class="p-4">
-                <button onclick="handleLogout()" class="w-full py-3 text-red-500 font-medium bg-red-50 rounded-xl"><i class="fa-solid fa-right-from-bracket mr-2"></i> ออกจากระบบ</button>
+                <button onclick="handleLogout()" class="w-full py-3 text-red-500 font-medium bg-red-50 rounded-xl"><i
+                        class="fa-solid fa-right-from-bracket mr-2"></i> ออกจากระบบ</button>
             </div>
         </div>
     </div>
 
     <!-- Full Screen Loading Overlay -->
-    <div id="global-loader" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[100] hidden items-center justify-center flex-col">
+    <div id="global-loader"
+        class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[100] hidden items-center justify-center flex-col">
         <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-16 w-16 mb-4"></div>
         <h2 id="loader-text" class="text-center text-gray-700 text-lg font-semibold">กำลังประมวลผล...</h2>
-        <p class="text-gray-500 text-sm mt-2 text-center px-4">ระบบกำลังเชื่อมต่อกับ Google Apps Script<br>อาจใช้เวลา 2-5 วินาที</p>
+        <p class="text-gray-500 text-sm mt-2 text-center px-4">ระบบกำลังเชื่อมต่อกับ Google Apps Script<br>อาจใช้เวลา
+            2-5 วินาที</p>
     </div>
 
     <!-- Toast Notification -->
@@ -357,33 +479,27 @@
         // ==========================================
         // 1. CONFIGURATION & STATE
         // ==========================================
-        // ใส่ URL ที่ได้จากการ Deploy Google Apps Script ของคุณที่นี่
-        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxxtzt8SzEGxsagormrGV8zRglABrA7NRep_Pk8SxkL3OQOi9v5Zs9UB5OssJOise0d/exec';
-        
+        const GAS_URL = 'https://script.google.com/macros/s/AKfycbxPVDtxFkr5lrKIPnk12JdN-YshoWBF3otl2iLMGqHLuU6AvQnIpENxCg3vTs6Ine9H/exec';
+
         let currentUser = null;
         let transactions = [];
         let charts = { income: null, expense: null };
-
         const categories = {
-            expense: ['อาหารและเครื่องดื่ม', 'การเดินทาง', 'ของใช้ส่วนตัว', 'ช้อปปิ้ง', 'บิลและค่าใช้จ่าย', 'อื่นๆ'],
-            income: ['เงินเดือน', 'ธุรกิจส่วนตัว', 'งานพิเศษ', 'โบนัส', 'อื่นๆ']
+            expense: ['อาหาร', 'เดินทาง', 'ช้อปปิ้ง', 'บันเทิง', 'บิล/ค่าใช้จ่าย', 'อื่นๆ'],
+            income: ['เงินเดือน', 'โบนัส', 'รายได้เสริม', 'อื่นๆ']
         };
 
-        // ==========================================
-        // 2. INITIALIZATION
-        // ==========================================
-        document.addEventListener('DOMContentLoaded', () => {
-            // Setup Date input default
-            document.getElementById('tx-date').valueAsDate = new Date();
-            setTxType('expense'); // Init form type
-            
-            // Check Session
+        // ตรวจสอบ Session เมื่อเปิดเว็บ
+        window.onload = () => {
             const savedUser = localStorage.getItem('myPocketUser');
-            if(savedUser) {
+            if (savedUser) {
                 currentUser = JSON.parse(savedUser);
                 showAppLayer();
+            } else {
+                document.getElementById('auth-layer').classList.remove('hidden');
+                setTimeout(() => document.getElementById('auth-layer').classList.remove('opacity-0'), 50);
             }
-        });
+        };
 
         // ==========================================
         // 3. API HELPER
@@ -392,14 +508,18 @@
             try {
                 const response = await fetch(GAS_URL, {
                     method: 'POST',
-                    // ไม่ใช้ Headers เพื่อหลีกเลี่ยง CORS Preflight Options error กับ GAS
+                    headers: {
+                        // ต้องใช้ text/plain เพื่อหลีกเลี่ยง CORS Preflight OPTIONS error
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    redirect: 'follow', // สำคัญมาก: เพื่อให้ fetch วิ่งตาม Redirect ของ Google Apps Script
                     body: JSON.stringify({ action: action, ...payload })
                 });
                 const result = await response.json();
                 return result;
             } catch (error) {
                 console.error("API Error:", error);
-                return { status: 'error', message: 'เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์' };
+                return { status: 'error', message: 'เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ (ตรวจสอบการตั้งค่า Deploy)' };
             }
         }
 
@@ -407,7 +527,7 @@
         // 4. AUTHENTICATION LOGIC
         // ==========================================
         function toggleAuth(type) {
-            if(type === 'register') {
+            if (type === 'register') {
                 document.getElementById('login-form').classList.add('hidden');
                 document.getElementById('register-form').classList.remove('hidden');
             } else {
@@ -416,19 +536,55 @@
             }
         }
 
+        // --- เพิ่มตัวแปรสำหรับรูปโปรไฟล์ ---
+        let regProfileBase64 = null;
+        let regProfileFileName = null;
+
+        // --- ฟังก์ชันแสดงตัวอย่างรูปโปรไฟล์ตอนสมัคร ---
+        function previewRegProfile(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('reg-profile-preview');
+            const icon = document.getElementById('reg-profile-icon');
+
+            if (!file) {
+                regProfileBase64 = null;
+                regProfileFileName = null;
+                preview.classList.add('hidden');
+                icon.classList.remove('hidden');
+                return;
+            }
+
+            // จำกัดขนาดไฟล์ 2MB
+            if (file.size > 2 * 1024 * 1024) {
+                showToast('ไฟล์ภาพโปรไฟล์ใหญ่เกิน 2MB', 'error');
+                e.target.value = '';
+                return;
+            }
+
+            regProfileFileName = file.name;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                regProfileBase64 = event.target.result;
+                preview.src = event.target.result;
+                preview.classList.remove('hidden');
+                icon.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
         async function handleLogin(e) {
             e.preventDefault();
             const user = document.getElementById('login-username').value;
             const pass = document.getElementById('login-password').value;
-            
+
             showLoader('กำลังตรวจสอบข้อมูลเข้าสู่ระบบ...');
             const res = await callGAS('login', { username: user, password: pass });
             hideLoader();
 
-            if(res.status === 'success') {
+            if (res.status === 'success') {
                 // ปรับจูนโครงสร้างข้อมูลให้รองรับการส่งกลับมาจาก GAS ทุกรูปแบบ
                 currentUser = res.user ? res.user : { user_id: res.user_id, name: res.name, username: user };
-                
+
                 localStorage.setItem('myPocketUser', JSON.stringify(currentUser));
                 showToast('เข้าสู่ระบบสำเร็จ', 'success');
                 showAppLayer();
@@ -443,14 +599,32 @@
             const email = document.getElementById('reg-email').value;
             const user = document.getElementById('reg-username').value;
             const pass = document.getElementById('reg-password').value;
-            
+
+            // เพิ่มการส่งรูปโปรไฟล์ไปกับ Payload
+            const payload = {
+                name: name,
+                email: email,
+                username: user,
+                password: pass,
+                profileBase64: regProfileBase64 || '',
+                profileFileName: regProfileFileName || ''
+            };
+
             showLoader('กำลังสร้างบัญชีผู้ใช้ใหม่...');
-            const res = await callGAS('register', { name: name, email: email, username: user, password: pass });
+            const res = await callGAS('register', payload);
             hideLoader();
 
-            if(res.status === 'success') {
+            if (res.status === 'success') {
                 showToast('สมัครสมาชิกสำเร็จ กรุณาล็อกอิน', 'success');
                 document.getElementById('register-form').reset();
+
+                // รีเซ็ตรูปพรีวิวกลับเป็นสถานะเดิม
+                document.getElementById('reg-profile-preview').classList.add('hidden');
+                document.getElementById('reg-profile-preview').src = '';
+                document.getElementById('reg-profile-icon').classList.remove('hidden');
+                regProfileBase64 = null;
+                regProfileFileName = null;
+
                 toggleAuth('login');
                 document.getElementById('login-username').value = user;
             } else {
@@ -462,7 +636,7 @@
             localStorage.removeItem('myPocketUser');
             currentUser = null;
             transactions = [];
-            
+
             // UI Reset
             document.getElementById('app-layer').classList.add('opacity-0', 'pointer-events-none');
             setTimeout(() => {
@@ -474,8 +648,31 @@
 
         function showAppLayer() {
             document.getElementById('sidebar-user-name').textContent = currentUser.name;
-            
-            if(document.getElementById('prof-name')) {
+
+            // --- จัดการแสดงผลรูปโปรไฟล์ (Sidebar & Mobile Header) ---
+            const sidebarImg = document.getElementById('sidebar-avatar-img');
+            const sidebarIcon = document.getElementById('sidebar-avatar-icon');
+            const mobileImg = document.getElementById('mobile-avatar-img');
+            const mobileIcon = document.getElementById('mobile-avatar-icon');
+
+            if (currentUser.profile_url) {
+                // ถ้ามีรูป ให้ซ่อนไอคอนแล้วโชว์รูป
+                sidebarImg.src = currentUser.profile_url;
+                sidebarImg.classList.remove('hidden');
+                sidebarIcon.classList.add('hidden');
+
+                mobileImg.src = currentUser.profile_url;
+                mobileImg.classList.remove('hidden');
+                mobileIcon.classList.add('hidden');
+            } else {
+                // ถ้าไม่มีรูป ให้ซ่อนรูปแล้วโชว์ไอคอนปกติ
+                sidebarImg.classList.add('hidden');
+                sidebarIcon.classList.remove('hidden');
+                mobileImg.classList.add('hidden');
+                mobileIcon.classList.remove('hidden');
+            }
+
+            if (document.getElementById('prof-name')) {
                 document.getElementById('prof-username').value = currentUser.username || '';
                 document.getElementById('prof-name').value = currentUser.name || '';
                 document.getElementById('prof-email').value = currentUser.email || '';
@@ -487,7 +684,7 @@
                 document.getElementById('auth-layer').classList.add('hidden');
                 const appLayer = document.getElementById('app-layer');
                 appLayer.classList.remove('opacity-0', 'pointer-events-none');
-                
+
                 // Load data after UI is visible
                 loadData();
             }, 500);
@@ -501,7 +698,7 @@
             const res = await callGAS('get_transactions', { user_id: currentUser.user_id });
             hideLoader();
 
-            if(res.status === 'success') {
+            if (res.status === 'success') {
                 transactions = res.data;
                 updateUI();
                 showToast('โหลดข้อมูลล่าสุดแล้ว', 'success');
@@ -526,10 +723,10 @@
 
             transactions.forEach(tx => {
                 const amt = parseFloat(tx.amount) || 0;
-                if(tx.type === 'income') {
+                if (tx.type === 'income') {
                     tInc += amt;
                     incData[tx.category] = (incData[tx.category] || 0) + amt;
-                } else if(tx.type === 'expense') {
+                } else if (tx.type === 'expense') {
                     tExp += amt;
                     expData[tx.category] = (expData[tx.category] || 0) + amt;
                 }
@@ -549,9 +746,9 @@
             const labels = Object.keys(dataObj);
             const data = Object.values(dataObj);
 
-            if(existingChart) existingChart.destroy();
+            if (existingChart) existingChart.destroy();
 
-            if(labels.length === 0) {
+            if (labels.length === 0) {
                 return new Chart(ctx, {
                     type: 'doughnut',
                     data: { labels: ['ไม่มีข้อมูล'], datasets: [{ data: [1], backgroundColor: ['#f1f5f9'] }] },
@@ -572,10 +769,10 @@
                         legend: { position: 'bottom', labels: { font: { family: 'Prompt' }, boxWidth: 12 } },
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
+                                label: function (context) {
                                     let label = context.label || '';
-                                    if(label) label += ': ';
-                                    if(context.parsed !== null) label += formatMoney(context.parsed) + ' บาท';
+                                    if (label) label += ': ';
+                                    if (context.parsed !== null) label += formatMoney(context.parsed) + ' บาท';
                                     return label;
                                 }
                             }
@@ -592,22 +789,22 @@
             const tbody = document.getElementById('table-records');
             tbody.innerHTML = '';
 
-            if(transactions.length === 0) {
+            if (transactions.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-400">ไม่มีข้อมูลรายการ</td></tr>';
                 return;
             }
 
             transactions.forEach(tx => {
                 const isInc = tx.type === 'income';
-                const typeLabel = isInc 
-                    ? '<span class="px-2.5 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-medium">รายรับ</span>' 
+                const typeLabel = isInc
+                    ? '<span class="px-2.5 py-1 bg-green-100 text-green-700 rounded-lg text-xs font-medium">รายรับ</span>'
                     : '<span class="px-2.5 py-1 bg-red-100 text-red-600 rounded-lg text-xs font-medium">รายจ่าย</span>';
-                
+
                 const amtClass = isInc ? 'text-green-600' : 'text-red-500';
                 const sign = isInc ? '+' : '-';
-                
+
                 let fileHTML = '-';
-                if(tx.receipt_url && tx.receipt_url.startsWith('http')) {
+                if (tx.receipt_url && tx.receipt_url.startsWith('http')) {
                     fileHTML = `<a href="${tx.receipt_url}" target="_blank" class="text-primary hover:text-primaryHover transition"><i class="fa-solid fa-file-image text-lg"></i></a>`;
                 }
 
@@ -654,7 +851,7 @@
         function previewFile(e) {
             const file = e.target.files[0];
             const nameDisplay = document.getElementById('file-name');
-            if(!file) {
+            if (!file) {
                 tempBase64 = null;
                 tempFileName = null;
                 nameDisplay.classList.add('hidden');
@@ -662,7 +859,7 @@
             }
 
             // Check size (Max 2MB for GAS safety via JSON payload)
-            if(file.size > 2 * 1024 * 1024) {
+            if (file.size > 2 * 1024 * 1024) {
                 showToast('ไฟล์มีขนาดใหญ่เกิน 2MB', 'error');
                 e.target.value = '';
                 return;
@@ -681,7 +878,7 @@
 
         async function submitTransaction(e) {
             e.preventDefault();
-            
+
             const payload = {
                 user_id: currentUser.user_id,
                 date: document.getElementById('tx-date').value,
@@ -697,7 +894,7 @@
             const res = await callGAS('add_transaction', payload);
             hideLoader();
 
-            if(res.status === 'success') {
+            if (res.status === 'success') {
                 showToast('บันทึกข้อมูลเรียบร้อย', 'success');
                 // Reset form
                 document.getElementById('tx-form').reset();
@@ -706,7 +903,7 @@
                 tempBase64 = null;
                 tempFileName = null;
                 setTxType(payload.type); // keep type
-                
+
                 // Switch to dashboard and reload
                 switchTab('dashboard');
                 loadData();
@@ -720,25 +917,25 @@
         // ==========================================
         async function submitUpdateProfile(e) {
             e.preventDefault();
-            
+
             const name = document.getElementById('prof-name').value;
             const email = document.getElementById('prof-email').value;
             const pass = document.getElementById('prof-password').value;
             const passConfirm = document.getElementById('prof-password-confirm').value;
 
-            if(pass !== passConfirm) {
+            if (pass !== passConfirm) {
                 showToast('รหัสผ่านใหม่ไม่ตรงกัน', 'error');
                 return;
             }
 
             const payload = { user_id: currentUser.user_id, name: name, email: email };
-            if(pass) payload.password = pass; // ส่งรหัสผ่านไปเฉพาะกรณีที่มีการพิมพ์เปลี่ยน
+            if (pass) payload.password = pass; // ส่งรหัสผ่านไปเฉพาะกรณีที่มีการพิมพ์เปลี่ยน
 
             showLoader('กำลังอัปเดตข้อมูลบัญชี...');
             const res = await callGAS('update_profile', payload);
             hideLoader();
 
-            if(res.status === 'success') {
+            if (res.status === 'success') {
                 showToast('อัปเดตข้อมูลสำเร็จ', 'success');
                 // อัปเดตข้อมูลใน Session ปัจจุบัน
                 currentUser.name = name;
@@ -765,7 +962,7 @@
             // Show target
             document.getElementById(`view-${tabId}`).classList.remove('hidden');
             document.getElementById(`view-${tabId}`).classList.add('block');
-            
+
             // Reset Nav styling
             document.querySelectorAll('.nav-item').forEach(el => {
                 el.classList.remove('bg-blue-50', 'text-primary');
@@ -773,7 +970,7 @@
             });
             // Active Nav
             const activeNav = document.getElementById(`nav-${tabId}`);
-            if(activeNav) {
+            if (activeNav) {
                 activeNav.classList.add('bg-blue-50', 'text-primary');
                 activeNav.classList.remove('text-gray-600');
             }
@@ -788,18 +985,18 @@
         }
 
         function formatDate(dateStr) {
-            if(!dateStr) return '-';
+            if (!dateStr) return '-';
             const d = new Date(dateStr);
             return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
         function getGreenShades(count) {
             const colors = ['#4ade80', '#22c55e', '#16a34a', '#15803d', '#14532d', '#86efac'];
-            return Array.from({length: count}, (_, i) => colors[i % colors.length]);
+            return Array.from({ length: count }, (_, i) => colors[i % colors.length]);
         }
         function getRedShades(count) {
             const colors = ['#f87171', '#ef4444', '#dc2626', '#b91c1c', '#7f1d1d', '#fca5a5'];
-            return Array.from({length: count}, (_, i) => colors[i % colors.length]);
+            return Array.from({ length: count }, (_, i) => colors[i % colors.length]);
         }
 
         // Loading Overlay
@@ -819,16 +1016,16 @@
         function showToast(msg, type = 'success') {
             const toastBox = document.getElementById('toastBox');
             const toast = document.createElement('div');
-            
-            const icon = type === 'success' 
+
+            const icon = type === 'success'
                 ? '<div class="w-8 h-8 rounded-full bg-green-100 text-green-500 flex items-center justify-center shrink-0"><i class="fa-solid fa-check"></i></div>'
                 : '<div class="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center shrink-0"><i class="fa-solid fa-xmark"></i></div>';
-            
+
             toast.className = `bg-white px-4 py-3 rounded-xl shadow-lg border border-gray-100 flex items-center gap-3 transform transition-all duration-300 translate-y-10 opacity-0 min-w-[250px]`;
             toast.innerHTML = `${icon}<span class="text-sm font-medium text-gray-700">${msg}</span>`;
-            
+
             toastBox.appendChild(toast);
-            
+
             // Animate In
             setTimeout(() => {
                 toast.classList.remove('translate-y-10', 'opacity-0');
@@ -842,4 +1039,5 @@
         }
     </script>
 </body>
+
 </html>
