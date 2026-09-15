@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlueWallet</title>
+    <title>BlueWallet - ระบบบันทึกรายรับรายจ่าย</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -72,7 +72,7 @@
                     class="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md text-2xl">
                     <i class="fa-solid fa-wallet"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800">MyPocket</h2>
+                <h2 class="text-2xl font-bold text-gray-800">BlueWallet</h2>
                 <p class="text-gray-500 mt-1">เข้าสู่ระบบเพื่อใช้งาน</p>
             </div>
             <form onsubmit="handleLogin(event)" class="space-y-4">
@@ -161,7 +161,7 @@
                     <img id="sidebar-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Profile">
                     <i id="sidebar-avatar-icon" class="fa-solid fa-user"></i>
                 </div>
-                <h2 class="text-xl font-bold text-gray-800">MyPocket</h2>
+                <h2 class="text-xl font-bold text-gray-800">BlueWallet</h2>
                 <p class="text-xs text-gray-500 truncate mt-1" id="sidebar-user-name">กำลังโหลด...</p>
             </div>
             <nav class="flex-1 py-4 flex flex-col gap-2 px-4 overflow-y-auto">
@@ -202,7 +202,7 @@
                         <img id="mobile-avatar-img" src="" class="w-full h-full object-cover hidden" alt="Profile">
                         <i id="mobile-avatar-icon" class="fa-solid fa-user text-sm"></i>
                     </div>
-                    <h1 class="text-lg font-bold text-gray-800">MyPocket</h1>
+                    <h1 class="text-lg font-bold text-gray-800">BlueWallet</h1>
                 </div>
                 <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-primary text-2xl px-2">
                     <i class="fa-solid fa-bars"></i>
@@ -290,7 +290,8 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">จำนวนเงิน (บาท) <span
                                             class="text-red-500">*</span></label>
-                                    <input type="number" id="tx-amount" required min="1" step="0.01"
+                                    <input type="number" id="tx-amount" required min="1" max="999999999" step="0.01"
+                                        oninput="if(this.value.length > 10) this.value = this.value.slice(0,10);"
                                         class="w-full px-4 py-3 text-xl font-bold text-gray-900 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none transition"
                                         placeholder="0.00">
                                 </div>
@@ -491,7 +492,7 @@
 
         // ตรวจสอบ Session เมื่อเปิดเว็บ
         window.onload = () => {
-            const savedUser = localStorage.getItem('myPocketUser');
+            const savedUser = localStorage.getItem('blueWalletUser');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
                 showAppLayer();
@@ -515,11 +516,63 @@
                     redirect: 'follow', // สำคัญมาก: เพื่อให้ fetch วิ่งตาม Redirect ของ Google Apps Script
                     body: JSON.stringify({ action: action, ...payload })
                 });
+
+                // ตรวจสอบว่า Response กลับมาเป็น HTTP 200 OK หรือไม่
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const result = await response.json();
                 return result;
             } catch (error) {
                 console.error("API Error:", error);
-                return { status: 'error', message: 'เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ (ตรวจสอบการตั้งค่า Deploy)' };
+                console.warn("เซิร์ฟเวอร์มีปัญหาหรือติด CORS - กำลังสลับไปใช้ Local Storage (Offline Mode)");
+
+                // แจ้งเตือนผู้ใช้เมื่อเกิดการสลับโหมด
+                if (action === 'login' || action === 'register' || action === 'get_transactions') {
+                    setTimeout(() => showToast('ไม่สามารถเชื่อมต่อ Google Sheets ได้ กำลังใช้งานโหมด Offline แทน', 'error'), 500);
+                }
+
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        // ดึงข้อมูลฐานข้อมูลจำลองจาก Local Storage
+                        let users = JSON.parse(localStorage.getItem('mockUsers') || '[]');
+                        let txs = JSON.parse(localStorage.getItem('mockTxs') || '[]');
+
+                        if (action === 'login') {
+                            const u = users.find(x => x.username === payload.username && x.password === payload.password);
+                            if (u) resolve({ status: 'success', user: u });
+                            else resolve({ status: 'error', message: 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง (Offline)' });
+                        }
+                        else if (action === 'register') {
+                            if (users.some(x => x.username === payload.username)) {
+                                return resolve({ status: 'error', message: 'Username นี้มีผู้ใช้งานแล้ว (Offline)' });
+                            }
+                            const newUser = { user_id: 'U' + Date.now(), ...payload };
+                            users.push(newUser);
+                            localStorage.setItem('mockUsers', JSON.stringify(users));
+                            resolve({ status: 'success', message: 'สมัครสมาชิกสำเร็จ (Offline)' });
+                        }
+                        else if (action === 'add_transaction') {
+                            txs.push({ tx_id: 'TX' + Date.now(), ...payload });
+                            localStorage.setItem('mockTxs', JSON.stringify(txs));
+                            resolve({ status: 'success', message: 'บันทึกข้อมูลเรียบร้อย (Offline)' });
+                        }
+                        else if (action === 'get_transactions') {
+                            const userTxs = txs.filter(x => x.user_id === payload.user_id);
+                            resolve({ status: 'success', data: userTxs });
+                        }
+                        else if (action === 'update_profile') {
+                            const idx = users.findIndex(x => x.user_id === payload.user_id);
+                            if (idx > -1) {
+                                users[idx] = { ...users[idx], name: payload.name, email: payload.email };
+                                if (payload.password) users[idx].password = payload.password;
+                                localStorage.setItem('mockUsers', JSON.stringify(users));
+                                resolve({ status: 'success', message: 'อัปเดตข้อมูลสำเร็จ (Offline)' });
+                            } else resolve({ status: 'error', message: 'ไม่พบผู้ใช้งาน (Offline)' });
+                        }
+                    }, 800); // หน่วงเวลา 800ms จำลองการดึงข้อมูลจากอินเทอร์เน็ต
+                });
             }
         }
 
@@ -585,7 +638,7 @@
                 // ปรับจูนโครงสร้างข้อมูลให้รองรับการส่งกลับมาจาก GAS ทุกรูปแบบ
                 currentUser = res.user ? res.user : { user_id: res.user_id, name: res.name, username: user };
 
-                localStorage.setItem('myPocketUser', JSON.stringify(currentUser));
+                localStorage.setItem('blueWalletUser', JSON.stringify(currentUser));
                 showToast('เข้าสู่ระบบสำเร็จ', 'success');
                 showAppLayer();
             } else {
@@ -633,7 +686,7 @@
         }
 
         function handleLogout() {
-            localStorage.removeItem('myPocketUser');
+            localStorage.removeItem('blueWalletUser');
             currentUser = null;
             transactions = [];
 
@@ -940,7 +993,7 @@
                 // อัปเดตข้อมูลใน Session ปัจจุบัน
                 currentUser.name = name;
                 currentUser.email = email;
-                localStorage.setItem('myPocketUser', JSON.stringify(currentUser));
+                localStorage.setItem('blueWalletUser', JSON.stringify(currentUser));
                 document.getElementById('sidebar-user-name').textContent = name;
                 // ล้างช่องรหัสผ่าน
                 document.getElementById('prof-password').value = '';
